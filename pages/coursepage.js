@@ -82,8 +82,11 @@ export class CoursePage extends BasePage
             await this.click(this.nextMonth)
         }
 
-        const dates=await this.allDates.all()
+        const dates=await this.allDates.filter({
+            hasNot: this.page.locator('.react-datepicker__day--outside-month')
+        }).all()
 
+        let dateSelected=false
         for(const dayLocator of dates)
         {
             const dayText=(await dayLocator.textContent()).trim()
@@ -91,15 +94,21 @@ export class CoursePage extends BasePage
             if(dayText === `${date}`)
             {
                 await this.click(dayLocator)
+                dateSelected=true
                 break
             }
+        }
+
+        if(!dateSelected)
+        {
+            throw new Error(`Could not find date "${date}" in ${targetMonthYear}`)
         }
     }
 
     async clickOnCategory(categoryName)
     {
         await this.click(this.selectCategory);
-        await this.click(this.page.getByRole('button', { name: categoryName }))
+        await this.click(this.page.getByRole('button', { name: categoryName, exact: true }))
     }
 
     async clickOnSave()

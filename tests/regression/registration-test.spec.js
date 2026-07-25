@@ -1,6 +1,6 @@
 import {test,expect} from "../../fixture/fixture.js"
-import data from "../../data/json/validcredentials.json"
-import dataset from "../../data/json/invalidcredentials.json"
+import data from "../../data/json/validcredentials.json" with { type: "json" }
+import dataset from "../../data/json/invalidcredentials.json" with { type: "json" }
 
 test.describe("New User Creation Test",()=>{
 

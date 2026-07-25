@@ -26,26 +26,18 @@ test.describe("Manage Category - Create Edit Delete Category",()=>{
 
         await expect(await categoryPage.categoryInTable("AgenticAI")).toBeVisible()
 
+        // delete category
+
         await categoryPage.clickOnDeleteCategory("AgenticAI")
 
         await expect(await categoryPage.categoryInTable("AgenticAI")).not.toBeVisible()
 
+        
         await categoryPage.page.close() // optional
 
         await page.bringToFront() //optional
 
     })
 
-    test("Kavya", async ({page})=>
-    {
-        
-        const actual=["Selenium","Playwright","Cypress"] // this is coming from your pages 
-
-        const expected=["Selenium","Playwright","Cypress","WDIO"] // this will come from testcases
-
-        //expect(actual).toEqual(expected)
-
-        expect(actual).toContain("Playwright")
-    })
 
 })

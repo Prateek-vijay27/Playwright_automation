@@ -6,6 +6,23 @@ import {DashBoardPage} from "../pages/dashboardpage.js"
 
 import {CoursePage} from "../pages/coursepage.js";
 
+/**
+ * @typedef {{
+ *   loginPage: LoginPage,
+ *   dashboardPage: DashBoardPage,
+ *   coursePage: CoursePage,
+ *   loggedInUser: LoginPage,
+ *   loggedInOnce: LoginPage,
+ * }} MyFixtures
+ */
+
+/**
+ * @type {import('@playwright/test').TestType<
+ *   import('@playwright/test').PlaywrightTestArgs & MyFixtures,
+ *   import('@playwright/test').PlaywrightWorkerArgs
+ * >}
+ */
+
 const test=base.extend({
 
             loginPage:async ({page},use)=>
@@ -27,9 +44,6 @@ const test=base.extend({
 
                 await use(loginPage)
 
-                const dashboardPage=new DashBoardPage(page)
-
-                await dashboardPage.logoutFromApplication()
 
             },
 
@@ -51,14 +65,6 @@ const test=base.extend({
                 const dashboardPage=new DashBoardPage(page)
 
                 await use(dashboardPage)
-
-            },
-
-            registrationPage: async ({page},use)=>{
-
-                const registrationPage=new RegistrationPage(page)
-
-                await use(registrationPage)
 
             },
 

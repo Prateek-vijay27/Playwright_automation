@@ -20,7 +20,7 @@ export class BasePage
     async fill(locator,value)
     {
         await locator.fill(value)
-    }x
+    }
 
     async selectOptions(locator,value)
     {

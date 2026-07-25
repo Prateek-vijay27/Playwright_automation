@@ -40,9 +40,9 @@ export class CategoryPage extends BasePage
     {
         const deleteButton=this.page.locator(`//td[text()='${categoryName}']//following::button[normalize-space()='Delete'][1]`)
 
-        this.click(deleteButton)
+        await this.click(deleteButton)
 
-        this.click(this.deleteCategory)
+        await this.click(this.deleteCategory)
     }   
 
 

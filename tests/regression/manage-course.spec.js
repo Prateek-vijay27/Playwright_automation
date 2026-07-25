@@ -4,7 +4,7 @@ import { CategoryPage } from "../../pages/categorypage.js";
 
 import { readExcel } from "../../utils/readexcel.js"
 
-import courseData from "../../data/json/course.json"
+import courseData from "../../data/json/course.json" with { type: "json" }
 
 const excelRows = readExcel("./data/excel/course.xlsx", "Course")
 
@@ -33,16 +33,38 @@ const excelCourseData =
 
 test.describe("Manage Course",()=>{
 
-    test("Courses all actions test", async ({page,loggedInUser,dashboardPage,coursePage})=>
-    {
+    // These tests create and delete data on the same shared application.
+    test.describe.configure({ mode: 'serial', timeout: 60000 })
 
-        await dashboardPage.clickOnManageButton();
+    async function createCategory(page, dashboardPage, categoryName)
+    {
+        await dashboardPage.clickOnManageButton()
+        const categoryWindow=await dashboardPage.clickOnManageCategory()
+        const categoryPage=new CategoryPage(categoryWindow)
+
+        await categoryPage.clickOnAddNewCategory(categoryName)
+        await expect(await categoryPage.categoryInTable(categoryName)).toBeVisible({ timeout: 15000 })
+        await categoryWindow.close()
+        await page.bringToFront()
+    }
+
+    test("Courses all actions test", async ({page,loggedInUser,dashboardPage,coursePage}, testInfo)=>
+    {
+        const timestamp=Date.now()
+        const categoryName=`PW-${testInfo.project.name}-${timestamp}`
+        const courseName=`${courseData.courseName} ${testInfo.project.name} ${timestamp}`
+
+        await createCategory(page, dashboardPage, categoryName)
+
+        console.log(categoryName)
+
+        await dashboardPage.clickOnManageButton()
 
         await dashboardPage.clickOnManageCourse()
 
         await coursePage.clickOnAddNewCourse()
 
-        await coursePage.enterCourseName(courseData.courseName)
+        await coursePage.enterCourseName(courseName)
 
         await coursePage.uploadFile(courseData.thumbnailPath)
 
@@ -60,21 +82,26 @@ test.describe("Manage Course",()=>{
 
         await coursePage.selectDates(courseData.dates[1].month,courseData.dates[1].year,courseData.dates[1].date)
 
-        await coursePage.clickOnCategory(courseData.category)
+        await coursePage.clickOnCategory(categoryName)
 
         await coursePage.clickOnSave()
 
-        await expect(coursePage.courseRow(courseData.courseName)).toBeVisible()
+        await expect(coursePage.courseRow(courseName)).toBeVisible()
 
-        await coursePage.clickOnDeleteButton(courseData.courseName)
+        await coursePage.clickOnDeleteButton(courseName)
 
-        await expect(coursePage.courseRow(courseData.courseName)).not.toBeVisible()
+        await expect(coursePage.courseRow(courseName)).not.toBeVisible({ timeout: 15000 })
 
 
     })
 
-     test("Courses all actions test with excel", async ({page,loggedInUser,dashboardPage,coursePage})=>
+     test("Courses all actions test with excel", async ({page,loggedInUser,dashboardPage,coursePage}, testInfo)=>
     {
+        const timestamp=Date.now()
+        const categoryName=`PW-${testInfo.project.name}-${timestamp}`
+        const courseName=`${excelCourseData.courseName} ${testInfo.project.name} ${timestamp}`
+
+        await createCategory(page, dashboardPage, categoryName)
 
         await dashboardPage.clickOnManageButton();
 
@@ -82,7 +109,7 @@ test.describe("Manage Course",()=>{
 
         await coursePage.clickOnAddNewCourse()
 
-        await coursePage.enterCourseName(excelCourseData.courseName)
+        await coursePage.enterCourseName(courseName)
 
         await coursePage.uploadFile(excelCourseData.thumbnailPath)
 
@@ -100,17 +127,15 @@ test.describe("Manage Course",()=>{
 
         await coursePage.selectDates(excelCourseData.dates[1].month,excelCourseData.dates[1].year,excelCourseData.dates[1].date)
 
-        await coursePage.clickOnCategory(excelCourseData.category)
+        await coursePage.clickOnCategory(categoryName)
 
         await coursePage.clickOnSave()
 
-        await expect(coursePage.courseRow(excelCourseData.courseName)).toBeVisible()
+        await expect(coursePage.courseRow(courseName)).toBeVisible()
 
-        await page.waitForTimeout(5000)
+        await coursePage.clickOnDeleteButton(courseName)
 
-        await coursePage.clickOnDeleteButton(excelCourseData.courseName)
-
-        await expect(coursePage.courseRow(excelCourseData.courseName)).not.toBeVisible()
+        await expect(coursePage.courseRow(courseName)).not.toBeVisible({ timeout: 15000 })
 
 
     })
