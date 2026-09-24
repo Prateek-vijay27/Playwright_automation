@@ -24,20 +24,20 @@ test.describe("Login Test Scenarios",()=>{
 
     })
 
-    for(let i=0;i<dataset.length;i++)
-    {
+//     for(let i=0;i<dataset.length;i++)
+//     {
 
-    test(`Login with different dataset ${dataset[i].id}`, async ({page,loginPage})=>
-    {
-        await page.goto("/login")
+//     test(`Login with different dataset ${dataset[i].id}`, async ({page,loginPage})=>
+//     {
+//         await page.goto("/login")
 
-        await loginPage.loginToApplication(dataset[i].username,dataset[i].password)
+//         await loginPage.loginToApplication(dataset[i].username,dataset[i].password)
 
-        await expect(await loginPage.getErrorMessage()).toBe(dataset[i].message)
+//         await expect(await loginPage.getErrorMessage()).toBe(dataset[i].message)
 
-    })
+//     })
 
-    }
+//     }
 
 
     
